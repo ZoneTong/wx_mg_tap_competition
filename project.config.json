@@ -8,7 +8,7 @@
 		"newFeature": true
 	},
 	"compileType": "game",
-	"libVersion": "1.9.94",
+	"libVersion": "2.9.4",
 	"appid": "wx9219baf0f9311e1f",
 	"projectname": "myminigame",
 	"simulatorType": "wechat",
