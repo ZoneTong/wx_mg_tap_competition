@@ -29,8 +29,8 @@ export default class GameInfo {
     )
 
     ctx.fillText(
-      '得分: ' + score,
-      screenWidth / 2 - 40,
+      '结果: ' + score,
+      screenWidth / 2 - 60,
       screenHeight / 2 - 100 + 130
     )
 

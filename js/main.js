@@ -71,6 +71,11 @@ export default class Main {
 
       if (this.distanceLitttThanEdge(edge) ){
         databus.gameOver = true;
+        if ( this.enemyHeight < this.Divider){
+          databus.score = '蓝方胜利'
+        } else {
+          databus.score = '橙方胜利'
+        }
       }
       console.log('touch',this.enemyHeight)
   }
@@ -80,7 +85,7 @@ export default class Main {
   }
 
   drawPlayer() {
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = '#4d90fe';
     ctx.fillRect(0, this.enemyHeight, canvas.width ,canvas.height-this.enemyHeight);
     ctx.drawImage(this.image, 0, this.enemyHeight, canvas.width ,canvas.height-this.enemyHeight);
   }
@@ -89,7 +94,7 @@ export default class Main {
     ctx.save()
     ctx.rotate(Math.PI)
     ctx.translate(-canvas.width, -this.enemyHeight);
-    ctx.fillStyle = 'orange';
+    ctx.fillStyle = '#ffcf6f';
     ctx.fillRect(0, 0, canvas.width,this.enemyHeight);
     ctx.drawImage(this.image, 0, 0, canvas.width,this.enemyHeight);
     ctx.restore()
