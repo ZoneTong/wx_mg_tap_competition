@@ -10,30 +10,30 @@ export default class Music {
 
     instance = this
 
-    this.bgmAudio = new Audio()
-    this.bgmAudio.loop = true
-    this.bgmAudio.src  = 'audio/bgm.mp3'
+    // this.bgmAudio = new Audio()
+    // this.bgmAudio.loop = true
+    // this.bgmAudio.src  = 'audio/bgm.mp3'
 
-    this.shootAudio     = new Audio()
-    this.shootAudio.src = 'audio/bullet.mp3'
+    this.dongAudio     = new Audio()
+    this.dongAudio.src = 'audio/dong.mp3'
 
-    this.boomAudio     = new Audio()
-    this.boomAudio.src = 'audio/boom.mp3'
+    this.taAudio     = new Audio()
+    this.taAudio.src = 'audio/ta.mp3'
 
-    this.playBgm()
+    // this.playBgm()
   }
 
   playBgm() {
     this.bgmAudio.play()
   }
 
-  playShoot() {
-    this.shootAudio.currentTime = 0
-    this.shootAudio.play()
+  playDong() {
+    this.dongAudio.currentTime = 0
+    this.dongAudio.play()
   }
 
-  playExplosion() {
-    this.boomAudio.currentTime = 0
-    this.boomAudio.play()
+  playTa() {
+    this.taAudio.currentTime = 0
+    this.taAudio.play()
   }
 }

@@ -1,5 +1,6 @@
 
 import GameInfo   from './runtime/gameinfo'
+import Music from './runtime/music'
 let ctx   = canvas.getContext('2d')
 let databus = {
   gameOver: false,
@@ -19,6 +20,11 @@ export default class Main {
     this.enemyHeight = this.Divider;
     this.image = wx.createImage();
     this.image.src = 'images/eyes.png';
+
+    this.diamond = wx.createImage();
+    this.diamond.src = 'images/diamond_origin.png';
+    this.diamond_float = 0;
+    this.diamond_direction = true;
 
     this.restart()
   }
@@ -40,6 +46,7 @@ export default class Main {
 
     this.enemyHeight = this.Divider;
     this.gameinfo = new GameInfo()
+    this.music = new Music()
 
     this.bindLoop     = this.loop.bind(this)
     this.hasEventBind = false
@@ -65,8 +72,10 @@ export default class Main {
 
       if (touchY < this.Divider ){
         this.enemyHeight += step;
+        this.music.playDong()
       }else if(touchY > this.Divider){
         this.enemyHeight -= step;
+        this.music.playTa()
       }
 
       if (this.distanceLitttThanEdge(edge) ){
@@ -77,29 +86,55 @@ export default class Main {
           databus.score = '橙方胜利'
         }
       }
-      console.log('touch',this.enemyHeight)
+      // console.log('touch',this.enemyHeight)
   }
 
   distanceLitttThanEdge(edge){
     return this.enemyHeight < edge || this.enemyHeight > canvas.height - edge
   }
 
+  drawBackgroud(){
+    let p_gradient  =  ctx.createLinearGradient(0, 0, 0, canvas.height);   //创建一个线性渐变
+    p_gradient.addColorStop(0,"#ffcf6f");
+    p_gradient.addColorStop(this.enemyHeight/canvas.height-0.01 ,"lightyellow");
+    p_gradient.addColorStop(this.enemyHeight/canvas.height ,"black");
+    p_gradient.addColorStop(this.enemyHeight/canvas.height+0.01 ,"lightblue");
+    p_gradient.addColorStop(1,"#4d90fe");
+    ctx.fillStyle = p_gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+  }
+
   drawPlayer() {
-    ctx.fillStyle = '#4d90fe';
-    ctx.fillRect(0, this.enemyHeight, canvas.width ,canvas.height-this.enemyHeight);
-    ctx.drawImage(this.image, 0, this.enemyHeight, canvas.width ,canvas.height-this.enemyHeight);
+    let h = canvas.height-this.enemyHeight;
+    ctx.drawImage(this.image, 0, this.enemyHeight, canvas.width ,h);
   }
 
   drawEmeny() {
     ctx.save()
     ctx.rotate(Math.PI)
     ctx.translate(-canvas.width, -this.enemyHeight);
-    ctx.fillStyle = '#ffcf6f';
-    ctx.fillRect(0, 0, canvas.width,this.enemyHeight);
     ctx.drawImage(this.image, 0, 0, canvas.width,this.enemyHeight);
     ctx.restore()
   }
 
+  drawDiamond(){
+    const size = 64;
+    if (this.diamond_direction){
+      this.diamond_float++;
+      if (this.diamond_float > 8){
+        this.diamond_direction = false;
+      }
+    } else {
+      this.diamond_float--;
+      if (this.diamond_float < -8){
+        this.diamond_direction = true;
+      }
+    }
+    ctx.drawImage(this.diamond, (canvas.width-size)/2, this.Divider-size/2+this.diamond_float/4, size, size);
+    // console.log("diamond")
+  }
 
   // 全局碰撞检测
   collisionDetection() {
@@ -129,9 +164,11 @@ export default class Main {
   render() {
     // console.log('render')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    this.gameinfo.renderGameScore(ctx, databus.score)
+    // this.gameinfo.renderGameScore(ctx, databus.score)
+    this.drawBackgroud()
     this.drawPlayer()
     this.drawEmeny()
+    this.drawDiamond()
 
     // 游戏结束停止帧循环
     if ( databus.gameOver ) {
