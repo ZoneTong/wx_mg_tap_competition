@@ -20,7 +20,7 @@ export default class Main {
 
     this.Divider = canvas.height/2
     this.image = wx.createImage();
-    this.image.src = 'images/eyes.png';
+    this.image.src = 'images/face.png';
 
     this.diamond = wx.createImage();
     this.diamond.src = 'images/diamond_origin.png';
