@@ -92,21 +92,21 @@ export default class GameInfo {
       screenHeight / 2 - 150 + 180
     )
 
-    ctx.fillStyle = "orange"
+    ctx.fillStyle = "gold"
     ctx.fillText(
       '游戏方法：双方以宝石为界，',
       screenWidth / 2 - 150 + 20,
-      screenHeight / 2 - 150 + 220
+      screenHeight / 2 - 150 + 215
     )
     ctx.fillText(
       '各自点击半个屏幕，手速快的',
       screenWidth / 2 - 150 + 20,
-      screenHeight / 2 - 150 + 250
+      screenHeight / 2 - 150 + 245
     )
     ctx.fillText(
       '获胜',
       screenWidth / 2 - 150 + 20,
-      screenHeight / 2 - 150 + 280
+      screenHeight / 2 - 150 + 275
     )
   }
 }
