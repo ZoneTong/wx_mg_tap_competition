@@ -7,6 +7,8 @@ let databus = {
   score: 0,
   frame: 0,
 }
+const TOUCH_INTERVAL = 100; // 避免同时多手指作弊,多手指也要有间隔的连弹才行
+const TOUCH_STEP = 20;
 
 /**
  * 游戏主函数
@@ -17,7 +19,6 @@ export default class Main {
     this.aniId    = 0
 
     this.Divider = canvas.height/2
-    this.enemyHeight = this.Divider;
     this.image = wx.createImage();
     this.image.src = 'images/eyes.png';
 
@@ -26,6 +27,9 @@ export default class Main {
     this.diamond_float = 0;
     this.diamond_direction = true;
 
+    this.music = new Music()
+    this.gameinfo = new GameInfo()
+    
     this.restart()
   }
 
@@ -45,15 +49,16 @@ export default class Main {
     canvas.addEventListener('touchstart',this.playHandler)
 
     this.enemyHeight = this.Divider;
-    this.gameinfo = new GameInfo()
-    this.music = new Music()
+
+    this.playing = false;
+    this.enemyLastTouchTime = 0;
+    this.playerLastTouchTime = 0;
 
     this.bindLoop     = this.loop.bind(this)
     this.hasEventBind = false
 
     // 清除上一局的动画
     window.cancelAnimationFrame(this.aniId);
-
 
     this.aniId = window.requestAnimationFrame(
       this.bindLoop,
@@ -62,21 +67,38 @@ export default class Main {
   }
 
   play(res) {
-    // wx.onTouchStart(function (res) {
+      if (!this.playing){
+        this.playing = true;
+        return
+      }
+      
       let touchY = res.changedTouches[0].clientY // 重新判断当前触摸点y坐标
-      const edge = 50;
-      let step = 24;
+      const edge = 60;
+      let step = TOUCH_STEP;
       if (this.distanceLitttThanEdge(edge * 3)){
         step /= 2;
       }
 
+      let now = (new Date()).getTime();// 真机上才是微秒。仿真器毫秒
+      console.log('touch height:',touchY,', time:', now)
       if (touchY < this.Divider ){
+        if (now - this.enemyLastTouchTime < TOUCH_INTERVAL){
+          console.log('enemy too quick', now - this.enemyLastTouchTime)
+          // return
+        }
+        this.enemyLastTouchTime = now;
         this.enemyHeight += step;
         this.music.playDong()
       }else if(touchY > this.Divider){
+        if (now - this.playerLastTouchTime < TOUCH_INTERVAL){
+          console.log('player too quick', now - this.playerLastTouchTime)
+          // return
+        }
+        this.playerLastTouchTime = now;
         this.enemyHeight -= step;
         this.music.playTa()
       }
+      
 
       if (this.distanceLitttThanEdge(edge) ){
         databus.gameOver = true;
@@ -86,7 +108,6 @@ export default class Main {
           databus.score = '橙方胜利'
         }
       }
-      // console.log('touch',this.enemyHeight)
   }
 
   distanceLitttThanEdge(edge){
@@ -102,8 +123,6 @@ export default class Main {
     p_gradient.addColorStop(1,"#4d90fe");
     ctx.fillStyle = p_gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-
   }
 
   drawPlayer() {
@@ -120,6 +139,9 @@ export default class Main {
   }
 
   drawDiamond(){
+    if (!this.playing){
+      this.gameinfo.renderGameBefore(ctx)
+    }
     const size = 64;
     if (this.diamond_direction){
       this.diamond_float++;
@@ -134,11 +156,6 @@ export default class Main {
     }
     ctx.drawImage(this.diamond, (canvas.width-size)/2, this.Divider-size/2+this.diamond_float/4, size, size);
     // console.log("diamond")
-  }
-
-  // 全局碰撞检测
-  collisionDetection() {
-    let that = this
   }
 
   // 游戏结束后的触摸事件处理逻辑
@@ -190,8 +207,6 @@ export default class Main {
   update() {
     if ( databus.gameOver )
       return;
-
-    this.collisionDetection()
 
     if ( databus.frame % 20 === 0 ) {
       
