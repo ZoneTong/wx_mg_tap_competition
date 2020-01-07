@@ -1,7 +1,12 @@
-## quickstart
+# quickstart
+
+## 游戏界面
+
+![游戏](./images/IMG_0996.GIF)
 
 ## 源码目录介绍
-```
+
+```bash
 ./js
 ├── base                                   // 定义游戏开发基础类
 │   ├── animatoin.js                       // 帧动画的简易实现
